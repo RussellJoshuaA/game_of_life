@@ -34,10 +34,24 @@ class GameWindow < Gosu::Window
   def button_down(btn_code)
     self.close if btn_code == Gosu::KB_ESCAPE
 
-    @grid.columns = (@grid.columns + 1) if btn_code == Gosu::KB_RIGHT_BRACKET
-    @grid.columns = (@grid.columns - 1) if btn_code == Gosu::KB_LEFT_BRACKET
-    @grid.rows = (@grid.rows + 1) if btn_code == Gosu::KB_EQUALS
-    @grid.rows = (@grid.rows - 1) if btn_code == Gosu::KB_MINUS
+    case btn_code
+    when Gosu::KB_RIGHT_BRACKET
+      @grid.columns = (@grid.columns + 1)
+      @cell_matrix.generate_cells
+      @cell_matrix.trim_cells
+    when Gosu::KB_LEFT_BRACKET
+      @grid.columns = (@grid.columns - 1)
+      @cell_matrix.generate_cells
+      @cell_matrix.trim_cells
+    when Gosu::KB_EQUALS
+      @grid.rows = (@grid.rows + 1)
+      @cell_matrix.generate_cells
+      @cell_matrix.trim_cells
+    when Gosu::KB_MINUS
+      @grid.rows = (@grid.rows - 1)
+      @cell_matrix.generate_cells
+      @cell_matrix.trim_cells
+    end
 
     if btn_code == Gosu::KB_SPACE
       @cell_matrix.update
