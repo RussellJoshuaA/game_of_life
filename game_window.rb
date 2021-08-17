@@ -11,10 +11,12 @@ class GameWindow < Gosu::Window
 
     @cell_matrix = CellMatrix.new(@grid)
     @cell_matrix.generate_cells
+
+    @auto_play = false
   end
 
   def update
-
+    @cell_matrix.update if @auto_play
   end
 
   def draw
@@ -33,7 +35,7 @@ class GameWindow < Gosu::Window
   end
 
   def button_down(btn_code)
-    self.close if btn_code == Gosu::KB_ESCAPE
+    @cell_matrix.reset if btn_code == Gosu::KB_ESCAPE
 
     # the following are removed temporarily
     # case btn_code
@@ -64,6 +66,8 @@ class GameWindow < Gosu::Window
     end
 
     if btn_code == Gosu::KB_SPACE
+      @auto_play = !@auto_play
+    elsif btn_code == Gosu::KB_RETURN
       @cell_matrix.update
     end
   end

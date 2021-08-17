@@ -16,6 +16,11 @@ class CellMatrix
     @iteration += 1
   end
 
+  def reset
+    @cells = []
+    generate_cells
+  end
+
   def cell_at(x, y, relative = false)
     x, y = x - Grid::LEFT_PAD, y - Grid::TOP_PAD unless relative
     x = x - (x % Grid::CELL_WIDTH)
