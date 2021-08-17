@@ -4,7 +4,7 @@ class GameWindow < Gosu::Window
     super(1024, 768, false)
     self.caption = 'Game Window'
 
-    @grid = Grid.new(40, 48)
+    @grid = Grid.new(46, 44)
 
     @title_font = Gosu::Font.new(32)
     @controls_font = Gosu::Font.new(24)
@@ -122,12 +122,13 @@ class GameWindow < Gosu::Window
 
   def draw_controls
     @controls_font.draw_text('Play/Pause: Space', 8, 48, 0)
-    @controls_font.draw_text('Grid Width: { / }', 8, 72, 0)
-    @controls_font.draw_text('Grid Height: - / +', 8, 96, 0)
+    @controls_font.draw_text('Next Iteration: Enter', 8, 72, 0)
+    @controls_font.draw_text('Activate Cell: Left Click', 8, 96, 0)
+    @controls_font.draw_text('Deactivate Cell: Right Click', 8, 120, 0)
   end
 
   def draw_info
-    @controls_font.draw_text("Iteration: #{@cell_matrix.iteration}", 8, 128, 0)
+    @controls_font.draw_text("Iteration: #{@cell_matrix.iteration}", 8, 152, 0)
   end
 
   def draw_cells
