@@ -53,6 +53,14 @@ class GameWindow < Gosu::Window
       @cell_matrix.trim_cells
     end
 
+    if grid_mouseover
+      if btn_code == Gosu::MS_LEFT
+        @cell_matrix.cell_at(mouse_x, mouse_y).alive = true
+      elsif btn_code == Gosu::MS_RIGHT
+        @cell_matrix.cell_at(mouse_x, mouse_y).alive = false
+      end
+    end
+
     if btn_code == Gosu::KB_SPACE
       @cell_matrix.update
     end
@@ -91,11 +99,11 @@ class GameWindow < Gosu::Window
   end
 
   def grid_right
-    Grid::LEFT_PAD + grid_width
+    Grid::LEFT_PAD + grid_width + Grid::CELL_WIDTH
   end
 
   def grid_bottom
-    Grid::TOP_PAD + grid_height
+    Grid::TOP_PAD + grid_height + Grid::CELL_HEIGHT
   end
 
   def grid_mouseover
@@ -117,7 +125,8 @@ class GameWindow < Gosu::Window
       cell_row.each do |cell|
         cell_x = Grid::LEFT_PAD + cell.x
         cell_y = Grid::TOP_PAD + cell.y
-        draw_rect(cell_x, cell_y, Grid::CELL_WIDTH, Grid::CELL_HEIGHT, Gosu::Color::GREEN, -10)
+        cell.alive ? color = Gosu::Color::GREEN : color = Gosu::Color::GRAY
+        draw_rect(cell_x, cell_y, Grid::CELL_WIDTH, Grid::CELL_HEIGHT, color, -10)
       end
     end
   end

@@ -11,6 +11,13 @@ class CellMatrix
     generate_cells
   end
 
+  def cell_at(x, y)
+    x, y = x - Grid::LEFT_PAD, y - Grid::TOP_PAD
+    x = x - (x % Grid::CELL_WIDTH)
+    y = y - (y % Grid::CELL_HEIGHT)
+    @cells.flatten.find { |cell| cell.x == x && cell.y == y }
+  end
+
   def trim_cells
     @cells = @cells[0..@grid.rows]
     @cells.each_with_index do |row, i|
