@@ -20,6 +20,7 @@ class GameWindow < Gosu::Window
   def draw
     draw_title
     draw_controls
+    draw_info
 
     draw_grid
     if grid_mouseover
@@ -118,6 +119,10 @@ class GameWindow < Gosu::Window
     @controls_font.draw_text('Play/Pause: Space', 8, 48, 0)
     @controls_font.draw_text('Grid Width: { / }', 8, 72, 0)
     @controls_font.draw_text('Grid Height: - / +', 8, 96, 0)
+  end
+
+  def draw_info
+    @controls_font.draw_text("Iteration: #{@cell_matrix.iteration}", 8, 128, 0)
   end
 
   def draw_cells

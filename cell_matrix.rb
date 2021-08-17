@@ -1,7 +1,8 @@
 class CellMatrix
-  attr_reader :cells
+  attr_reader :iteration, :cells
 
   def initialize(grid)
+    @iteration = 0
     @grid = grid
     @cells = [[]]
   end
@@ -9,6 +10,7 @@ class CellMatrix
   def update
     trim_cells
     generate_cells
+    @iteration += 1
   end
 
   def cell_at(x, y)
