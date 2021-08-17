@@ -4,7 +4,7 @@ class GameWindow < Gosu::Window
     super(1024, 768, false)
     self.caption = 'Game Window'
 
-    @grid = Grid.new(40, 30)
+    @grid = Grid.new(40, 48)
 
     @title_font = Gosu::Font.new(32)
     @controls_font = Gosu::Font.new(24)
@@ -35,24 +35,25 @@ class GameWindow < Gosu::Window
   def button_down(btn_code)
     self.close if btn_code == Gosu::KB_ESCAPE
 
-    case btn_code
-    when Gosu::KB_RIGHT_BRACKET
-      @grid.columns = (@grid.columns + 1)
-      @cell_matrix.generate_cells
-      @cell_matrix.trim_cells
-    when Gosu::KB_LEFT_BRACKET
-      @grid.columns = (@grid.columns - 1)
-      @cell_matrix.generate_cells
-      @cell_matrix.trim_cells
-    when Gosu::KB_EQUALS
-      @grid.rows = (@grid.rows + 1)
-      @cell_matrix.generate_cells
-      @cell_matrix.trim_cells
-    when Gosu::KB_MINUS
-      @grid.rows = (@grid.rows - 1)
-      @cell_matrix.generate_cells
-      @cell_matrix.trim_cells
-    end
+    # the following are removed temporarily
+    # case btn_code
+    # when Gosu::KB_RIGHT_BRACKET
+    #   @grid.columns = (@grid.columns + 1)
+    #   @cell_matrix.generate_cells
+    #   @cell_matrix.trim_cells
+    # when Gosu::KB_LEFT_BRACKET
+    #   @grid.columns = (@grid.columns - 1)
+    #   @cell_matrix.generate_cells
+    #   @cell_matrix.trim_cells
+    # when Gosu::KB_EQUALS
+    #   @grid.rows = (@grid.rows + 1)
+    #   @cell_matrix.generate_cells
+    #   @cell_matrix.trim_cells
+    # when Gosu::KB_MINUS
+    #   @grid.rows = (@grid.rows - 1)
+    #   @cell_matrix.generate_cells
+    #   @cell_matrix.trim_cells
+    # end
 
     if grid_mouseover
       if btn_code == Gosu::MS_LEFT
@@ -126,13 +127,11 @@ class GameWindow < Gosu::Window
   end
 
   def draw_cells
-    @cell_matrix.cells.each do |cell_row|
-      cell_row.each do |cell|
-        cell_x = Grid::LEFT_PAD + cell.x
-        cell_y = Grid::TOP_PAD + cell.y
-        cell.alive ? color = Gosu::Color::GREEN : color = Gosu::Color::GRAY
-        draw_rect(cell_x, cell_y, Grid::CELL_WIDTH, Grid::CELL_HEIGHT, color, -10)
-      end
+    @cell_matrix.cells.each do |cell|
+      cell_x = Grid::LEFT_PAD + cell.x
+      cell_y = Grid::TOP_PAD + cell.y
+      cell.alive ? color = Gosu::Color::GREEN : color = Gosu::Color::GRAY
+      draw_rect(cell_x, cell_y, Grid::CELL_WIDTH, Grid::CELL_HEIGHT, color, -10)
     end
   end
 
