@@ -1,16 +1,30 @@
 class CellMatrix
   attr_reader :cells
 
-  def initialize
-    @cells = [[Cell.new(0, 0)]]
+  def initialize(grid)
+    @grid = grid
+    @cells = [[]]
   end
 
   def update
+    trim_cells
+    generate_cells
+  end
 
+  def trim_cells
+    @cells = @cells[0..@grid.rows]
+    @cells.each_with_index do |row, i|
+      @cells[i] = row[0..@grid.columns]
+    end
   end
 
   def generate_cells
-
+    (0..@grid.rows).each do |row|
+      @cells[row] ||= []
+      (0..@grid.columns).each do |column|
+        @cells[row][column] ||= Cell.new(Grid::CELL_WIDTH * column, Grid::CELL_HEIGHT * row)
+      end
+    end
   end
 
 end

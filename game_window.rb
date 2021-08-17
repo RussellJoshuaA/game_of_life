@@ -1,21 +1,16 @@
 class GameWindow < Gosu::Window
 
-  GRID_CELL_WIDTH = 16
-  GRID_CELL_HEIGHT = 16
-  GRID_LEFT_PAD = 200
-  GRID_TOP_PAD = 10
-
   def initialize
     super(1024, 768, false)
     self.caption = 'Game Window'
 
-    @grid_cols = 40
-    @grid_rows = 37
+    @grid = Grid.new(40, 30)
 
     @title_font = Gosu::Font.new(32)
     @controls_font = Gosu::Font.new(24)
 
-    @cell_matrix = CellMatrix.new
+    @cell_matrix = CellMatrix.new(@grid)
+    @cell_matrix.generate_cells
   end
 
   def update
@@ -28,9 +23,9 @@ class GameWindow < Gosu::Window
 
     draw_grid
     if grid_mouseover
-      mouseover_x = (mouse_x - ((mouse_x - GRID_LEFT_PAD) % GRID_CELL_WIDTH))
-      mouseover_y = (mouse_y - ((mouse_y - GRID_TOP_PAD) % GRID_CELL_HEIGHT))
-      draw_rect(mouseover_x, mouseover_y, GRID_CELL_WIDTH, GRID_CELL_HEIGHT, Gosu::Color::WHITE)
+      mouseover_x = (mouse_x - ((mouse_x - Grid::LEFT_PAD) % Grid::CELL_WIDTH))
+      mouseover_y = (mouse_y - ((mouse_y - Grid::TOP_PAD) % Grid::CELL_HEIGHT))
+      draw_rect(mouseover_x, mouseover_y, Grid::CELL_WIDTH, Grid::CELL_HEIGHT, Gosu::Color::WHITE)
     end
 
     draw_cells
@@ -39,10 +34,14 @@ class GameWindow < Gosu::Window
   def button_down(btn_code)
     self.close if btn_code == Gosu::KB_ESCAPE
 
-    @grid_cols += 1 if btn_code == Gosu::KB_RIGHT_BRACKET
-    @grid_cols -= 1 if btn_code == Gosu::KB_LEFT_BRACKET
-    @grid_rows += 1 if btn_code == Gosu::KB_EQUALS
-    @grid_rows -= 1 if btn_code == Gosu::KB_MINUS
+    @grid.columns = (@grid.columns + 1) if btn_code == Gosu::KB_RIGHT_BRACKET
+    @grid.columns = (@grid.columns - 1) if btn_code == Gosu::KB_LEFT_BRACKET
+    @grid.rows = (@grid.rows + 1) if btn_code == Gosu::KB_EQUALS
+    @grid.rows = (@grid.rows - 1) if btn_code == Gosu::KB_MINUS
+
+    if btn_code == Gosu::KB_SPACE
+      @cell_matrix.update
+    end
   end
 
   def needs_cursor?
@@ -52,41 +51,41 @@ class GameWindow < Gosu::Window
   private
 
   def draw_grid
-    (0..@grid_cols).each do |c|
-      column_x = (c * GRID_CELL_WIDTH) + GRID_LEFT_PAD
+    (0..(@grid.columns + 1)).each do |c|
+      column_x = (c * Grid::CELL_WIDTH) + Grid::LEFT_PAD
       draw_line(
-        column_x, GRID_TOP_PAD, Gosu::Color::WHITE,
-        column_x, GRID_TOP_PAD + grid_height, Gosu::Color::WHITE
+        column_x, Grid::TOP_PAD, Gosu::Color::WHITE,
+        column_x, Grid::TOP_PAD + grid_height + Grid::CELL_WIDTH, Gosu::Color::WHITE
       )
     end
-    (0..@grid_rows).each do |row|
-      row_y = (row * GRID_CELL_HEIGHT) + GRID_TOP_PAD
+    (0..(@grid.rows + 1)).each do |row|
+      row_y = (row * Grid::CELL_HEIGHT) + Grid::TOP_PAD
       draw_line(
-        GRID_LEFT_PAD + 0, row_y, Gosu::Color::WHITE,
-        GRID_LEFT_PAD + grid_width, row_y, Gosu::Color::WHITE
+        Grid::LEFT_PAD + 0, row_y, Gosu::Color::WHITE,
+        Grid::LEFT_PAD + grid_width + Grid::CELL_HEIGHT, row_y, Gosu::Color::WHITE
       )
     end
 
   end
 
   def grid_height
-    @grid_rows * GRID_CELL_HEIGHT
+    @grid.rows * Grid::CELL_HEIGHT
   end
 
   def grid_width
-    @grid_cols * GRID_CELL_WIDTH
+    @grid.columns * Grid::CELL_WIDTH
   end
 
   def grid_right
-    GRID_LEFT_PAD + grid_width
+    Grid::LEFT_PAD + grid_width
   end
 
   def grid_bottom
-    GRID_TOP_PAD + grid_height
+    Grid::TOP_PAD + grid_height
   end
 
   def grid_mouseover
-    (GRID_LEFT_PAD...grid_right).include?(mouse_x) && (GRID_TOP_PAD...grid_bottom).include?(mouse_y)
+    (Grid::LEFT_PAD...grid_right).include?(mouse_x) && (Grid::TOP_PAD...grid_bottom).include?(mouse_y)
   end
 
   def draw_title
@@ -102,9 +101,9 @@ class GameWindow < Gosu::Window
   def draw_cells
     @cell_matrix.cells.each do |cell_row|
       cell_row.each do |cell|
-        cell_x = GRID_LEFT_PAD + cell.x
-        cell_y = GRID_TOP_PAD + cell.y
-        draw_rect(cell_x, cell_y, GRID_CELL_WIDTH, GRID_CELL_HEIGHT, Gosu::Color::GREEN)
+        cell_x = Grid::LEFT_PAD + cell.x
+        cell_y = Grid::TOP_PAD + cell.y
+        draw_rect(cell_x, cell_y, Grid::CELL_WIDTH, Grid::CELL_HEIGHT, Gosu::Color::GREEN, -10)
       end
     end
   end
