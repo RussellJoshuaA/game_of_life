@@ -9,12 +9,17 @@ class GameWindow < Gosu::Window
     super(1024, 768, false)
     self.caption = 'Game Window'
 
-    @world = World.new
     @grid_cols = 40
     @grid_rows = 37
 
     @title_font = Gosu::Font.new(32)
     @controls_font = Gosu::Font.new(24)
+
+    @cell_matrix = CellMatrix.new
+  end
+
+  def update
+
   end
 
   def draw
@@ -27,6 +32,8 @@ class GameWindow < Gosu::Window
       mouseover_y = (mouse_y - ((mouse_y - GRID_TOP_PAD) % GRID_CELL_HEIGHT))
       draw_rect(mouseover_x, mouseover_y, GRID_CELL_WIDTH, GRID_CELL_HEIGHT, Gosu::Color::WHITE)
     end
+
+    draw_cells
   end
 
   def button_down(btn_code)
@@ -90,6 +97,16 @@ class GameWindow < Gosu::Window
     @controls_font.draw_text('Play/Pause: Space', 8, 48, 0)
     @controls_font.draw_text('Grid Width: { / }', 8, 72, 0)
     @controls_font.draw_text('Grid Height: - / +', 8, 96, 0)
+  end
+
+  def draw_cells
+    @cell_matrix.cells.each do |cell_row|
+      cell_row.each do |cell|
+        cell_x = GRID_LEFT_PAD + cell.x
+        cell_y = GRID_TOP_PAD + cell.y
+        draw_rect(cell_x, cell_y, GRID_CELL_WIDTH, GRID_CELL_HEIGHT, Gosu::Color::GREEN)
+      end
+    end
   end
 
 end
