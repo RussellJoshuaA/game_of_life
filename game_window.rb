@@ -135,8 +135,7 @@ class GameWindow < Gosu::Window
     @cell_matrix.cells.each do |cell|
       cell_x = Grid::LEFT_PAD + cell.x
       cell_y = Grid::TOP_PAD + cell.y
-      cell.alive ? color = Gosu::Color::GREEN : color = Gosu::Color::GRAY
-      draw_rect(cell_x, cell_y, Grid::CELL_WIDTH, Grid::CELL_HEIGHT, color, -10)
+      draw_rect(cell_x, cell_y, Grid::CELL_WIDTH, Grid::CELL_HEIGHT, Gosu::Color::GREEN, -10) if cell.alive
     end
   end
 

@@ -22,9 +22,11 @@ class CellMatrix
   end
 
   def cell_at(x, y, relative = false)
-    x, y = x - Grid::LEFT_PAD, y - Grid::TOP_PAD unless relative
-    x = x - (x % Grid::CELL_WIDTH)
-    y = y - (y % Grid::CELL_HEIGHT)
+    unless relative
+      x, y = x - Grid::LEFT_PAD, y - Grid::TOP_PAD
+      x = x - (x % Grid::CELL_WIDTH)
+      y = y - (y % Grid::CELL_HEIGHT)
+    end
     @cells.find { |cell| cell.x == x && cell.y == y }
   end
 
