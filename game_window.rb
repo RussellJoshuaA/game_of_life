@@ -14,10 +14,12 @@ class GameWindow < Gosu::Window
     @grid_rows = 37
 
     @title_font = Gosu::Font.new(32)
+    @controls_font = Gosu::Font.new(24)
   end
 
   def draw
-    @title_font.draw_text('Game Of Life', 10, 10, 0)
+    draw_title
+    draw_controls
 
     draw_grid
     if grid_mouseover
@@ -30,10 +32,10 @@ class GameWindow < Gosu::Window
   def button_down(btn_code)
     self.close if btn_code == Gosu::KB_ESCAPE
 
-    @grid_cols += 1 if btn_code == Gosu::KB_M
-    @grid_cols -= 1 if btn_code == Gosu::KB_N
-    @grid_rows += 1 if btn_code == Gosu::KB_K
-    @grid_rows -= 1 if btn_code == Gosu::KB_J
+    @grid_cols += 1 if btn_code == Gosu::KB_RIGHT_BRACKET
+    @grid_cols -= 1 if btn_code == Gosu::KB_LEFT_BRACKET
+    @grid_rows += 1 if btn_code == Gosu::KB_EQUALS
+    @grid_rows -= 1 if btn_code == Gosu::KB_MINUS
   end
 
   def needs_cursor?
@@ -81,7 +83,13 @@ class GameWindow < Gosu::Window
   end
 
   def draw_title
+    @title_font.draw_text('Game Of Life', 8, 8, 0)
+  end
 
+  def draw_controls
+    @controls_font.draw_text('Play/Pause: Space', 8, 48, 0)
+    @controls_font.draw_text('Grid Width: { / }', 8, 72, 0)
+    @controls_font.draw_text('Grid Height: - / +', 8, 96, 0)
   end
 
 end
