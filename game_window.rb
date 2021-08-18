@@ -10,7 +10,7 @@ class GameWindow < Gosu::Window
     @controls_font = Gosu::Font.new(24)
 
     @cell_matrix = CellMatrix.new(@grid)
-    @cell_matrix.generate_cells
+    @cell_matrix.reset
 
     @auto_play = false
   end
@@ -37,31 +37,11 @@ class GameWindow < Gosu::Window
   def button_down(btn_code)
     @cell_matrix.reset if btn_code == Gosu::KB_ESCAPE
 
-    # the following are removed temporarily
-    # case btn_code
-    # when Gosu::KB_RIGHT_BRACKET
-    #   @grid.columns = (@grid.columns + 1)
-    #   @cell_matrix.generate_cells
-    #   @cell_matrix.trim_cells
-    # when Gosu::KB_LEFT_BRACKET
-    #   @grid.columns = (@grid.columns - 1)
-    #   @cell_matrix.generate_cells
-    #   @cell_matrix.trim_cells
-    # when Gosu::KB_EQUALS
-    #   @grid.rows = (@grid.rows + 1)
-    #   @cell_matrix.generate_cells
-    #   @cell_matrix.trim_cells
-    # when Gosu::KB_MINUS
-    #   @grid.rows = (@grid.rows - 1)
-    #   @cell_matrix.generate_cells
-    #   @cell_matrix.trim_cells
-    # end
-
     if grid_mouseover
       if btn_code == Gosu::MS_LEFT
-        @cell_matrix.cell_at(mouse_x, mouse_y).alive = true
+        @cell_matrix.activate_cell(mouse_x, mouse_y)
       elsif btn_code == Gosu::MS_RIGHT
-        @cell_matrix.cell_at(mouse_x, mouse_y).alive = false
+        @cell_matrix.deactivate_cell(mouse_x, mouse_y)
       end
     end
 
@@ -132,10 +112,14 @@ class GameWindow < Gosu::Window
   end
 
   def draw_cells
-    @cell_matrix.cells.each do |cell|
-      cell_x = Grid::LEFT_PAD + cell.x
-      cell_y = Grid::TOP_PAD + cell.y
-      draw_rect(cell_x, cell_y, Grid::CELL_WIDTH, Grid::CELL_HEIGHT, Gosu::Color::GREEN, -10) if cell.alive
+    (0..@grid.rows).each do |row_index|
+      (0..@grid.columns).each do |column_index|
+        if @cell_matrix.cells[row_index][column_index]
+          cell_x = Grid::LEFT_PAD + column_index * Grid::CELL_WIDTH
+          cell_y = Grid::TOP_PAD + row_index * Grid::CELL_HEIGHT
+          draw_rect(cell_x, cell_y, Grid::CELL_WIDTH, Grid::CELL_HEIGHT, Gosu::Color::GREEN, -10)
+        end
+      end
     end
   end
 

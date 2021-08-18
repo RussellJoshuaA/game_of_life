@@ -8,72 +8,73 @@ class CellMatrix
   end
 
   def update
-    # the following are removed temporarily
-    # trim_cells
-    # generate_cells
     update_cells
 
     @iteration += 1
   end
 
+  def cell_at(x, y)
+    x_index = ((x - Grid::LEFT_PAD) / Grid::CELL_WIDTH).to_i
+    y_index = ((y - Grid::TOP_PAD) / Grid::CELL_HEIGHT).to_i
+    @cells[x_index][y_index]
+  end
+
+  def activate_cell(x, y)
+    column_index = ((x - Grid::LEFT_PAD) / Grid::CELL_WIDTH).to_i
+    row_index = ((y - Grid::TOP_PAD) / Grid::CELL_HEIGHT).to_i
+    @cells[row_index][column_index] = true
+  end
+
+  def deactivate_cell(x, y)
+    column_index = ((x - Grid::LEFT_PAD) / Grid::CELL_WIDTH).to_i
+    row_index = ((y - Grid::TOP_PAD) / Grid::CELL_HEIGHT).to_i
+    @cells[row_index][column_index] = false
+  end
+
   def reset
-    @cells = []
-    generate_cells
-  end
-
-  def cell_at(x, y, relative = false)
-    unless relative
-      x, y = x - Grid::LEFT_PAD, y - Grid::TOP_PAD
-      x = x - (x % Grid::CELL_WIDTH)
-      y = y - (y % Grid::CELL_HEIGHT)
-    end
-    @cells.find { |cell| cell.x == x && cell.y == y }
-  end
-
-  def trim_cells
-    @cells = @cells[0..@grid.rows]
-    @cells.each_with_index do |row, i|
-      @cells[i] = row[0..@grid.columns]
-    end
-  end
-
-  def generate_cells
     (0..@grid.rows).each do |row|
+      @cells[row] ||= []
       (0..@grid.columns).each do |column|
-        @cells << Cell.new(Grid::CELL_WIDTH * column, Grid::CELL_HEIGHT * row)
+        @cells[row][column] = false
       end
     end
   end
 
   def update_cells
-    new_cells = []
-    @cells.each do |cell|
-      neighbors = [
-        cell_at(cell.x - Grid::CELL_WIDTH, cell.y - Grid::CELL_HEIGHT, true),
-        cell_at(cell.x, cell.y - Grid::CELL_HEIGHT, true),
-        cell_at(cell.x + Grid::CELL_WIDTH, cell.y - Grid::CELL_HEIGHT, true),
-        cell_at(cell.x - Grid::CELL_WIDTH, cell.y, true),
-        cell_at(cell.x + Grid::CELL_WIDTH, cell.y, true),
-        cell_at(cell.x - Grid::CELL_WIDTH, cell.y + Grid::CELL_HEIGHT, true),
-        cell_at(cell.x, cell.y + Grid::CELL_HEIGHT, true),
-        cell_at(cell.x + Grid::CELL_WIDTH, cell.y + Grid::CELL_HEIGHT, true),
-      ]
-      live_neighbors = neighbors.select { |cell| cell && cell.alive }
+    new_values = []
+    (0..@grid.rows).each do |row_index|
+      new_values[row_index] ||= []
+      (0..@grid.columns).each do |column_index|
+        neighbors = []
+        neighbors << @cells[row_index - 1][column_index - 1] unless row_index == 0 || column_index == 0
+        neighbors << @cells[row_index - 1][column_index] unless row_index == 0
+        neighbors << @cells[row_index - 1][column_index + 1] unless row_index == 0
+        neighbors << @cells[row_index][column_index - 1] unless column_index == 0
+        neighbors << @cells[row_index][column_index + 1]
+        neighbors << @cells[row_index + 1][column_index - 1] unless row_index == @grid.rows || column_index == 0
+        neighbors << @cells[row_index + 1][column_index] unless row_index == @grid.rows
+        neighbors << @cells[row_index + 1][column_index + 1] unless row_index == @grid.rows
+        neighbor_count = neighbors.count { |neighbor| neighbor == true }
 
-      new_cell = Cell.new(cell.x, cell.y)
-      if cell.alive
-        if (2..3).include? live_neighbors.count
-          new_cell.alive = true
+        if @cells[row_index][column_index] == true
+          if (2..3).include? neighbor_count
+            new_values[row_index][column_index] = true
+          else
+            new_values[row_index][column_index] = false
+          end
         else
-          new_cell.alive = false
+          if neighbor_count == 3
+            new_values[row_index][column_index] = true
+          else
+            new_values[row_index][column_index] = false
+          end
         end
-      else
-        new_cell.alive = true if live_neighbors.count == 3
+
       end
-      new_cells << new_cell
+
     end
 
-    @cells = new_cells
+    @cells = new_values
   end
 
 end
