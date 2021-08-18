@@ -48,7 +48,10 @@ class GameWindow < Gosu::Window
   end
 
   def button_down(btn_code)
-    @cell_matrix.reset if btn_code == Gosu::KB_ESCAPE
+    if btn_code == Gosu::KB_ESCAPE
+      @cell_matrix.reset
+      @auto_play = false
+    end
 
     if grid_mouseover
       if btn_code == Gosu::MS_LEFT
@@ -62,6 +65,12 @@ class GameWindow < Gosu::Window
       @auto_play = !@auto_play
     elsif btn_code == Gosu::KB_RETURN
       @cell_matrix.update
+    end
+
+    if btn_code == Gosu::KB_S
+      @cell_matrix.quick_save
+    elsif btn_code == Gosu::KB_L
+      @cell_matrix.quick_load
     end
 
     case btn_code
@@ -138,16 +147,19 @@ class GameWindow < Gosu::Window
   end
 
   def draw_controls
-    @controls_font.draw_text('Play/Pause: Space', 8, 48, 0)
-    @controls_font.draw_text('Next Iteration: Enter', 8, 72, 0)
-    @controls_font.draw_text('Activate Cell: Left Click', 8, 96, 0)
-    @controls_font.draw_text('Deactivate Cell: Right Click', 8, 120, 0)
-    @controls_font.draw_text('Adjust Speed: 1, 2, 3... 9, 0', 8, 144, 0)
+    @controls_font.draw_text('Activate Cell: Left Click', 8, 48, 0)
+    @controls_font.draw_text('Deactivate Cell: Right Click', 8, 72, 0)
+
+    @controls_font.draw_text('Play/Pause: Space', 8, 104, 0)
+    @controls_font.draw_text('Next Iteration: Enter', 8, 128, 0)
+    @controls_font.draw_text('Reset: Esc', 8, 152, 0)
+    @controls_font.draw_text('Quick Save/Load: S / L', 8, 176, 0)
+    @controls_font.draw_text('Adjust Speed: 1, 2, 3... 9, 0', 8, 200, 0)
   end
 
   def draw_info
-    @controls_font.draw_text("Iteration: #{@cell_matrix.iteration}", 8, 192, 0)
-    @controls_font.draw_text("Speed: #{@speed}", 8, 216, 0)
+    @controls_font.draw_text("Iteration: #{@cell_matrix.iteration}", 8, 232, 0)
+    @controls_font.draw_text("Speed: #{@speed}", 8, 256, 0)
   end
 
   def draw_cells

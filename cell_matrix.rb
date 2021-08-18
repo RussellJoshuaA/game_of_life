@@ -13,6 +13,14 @@ class CellMatrix
     @iteration += 1
   end
 
+  def quick_save
+    @save = @cells.dup
+  end
+
+  def quick_load
+    @cells = @save.dup
+  end
+
   def cell_at(x, y)
     x_index = ((x - Grid::LEFT_PAD) / Grid::CELL_WIDTH).to_i
     y_index = ((y - Grid::TOP_PAD) / Grid::CELL_HEIGHT).to_i
