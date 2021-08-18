@@ -13,10 +13,23 @@ class GameWindow < Gosu::Window
     @cell_matrix.reset
 
     @auto_play = false
+    @speed = 100
+    @cooldown = 100
   end
 
   def update
-    @cell_matrix.update if @auto_play
+    if @auto_play
+      if @speed == 100
+        @cell_matrix.update
+      else
+        if @cooldown <= 0
+          @cell_matrix.update
+          @cooldown = 96 - @speed
+        else
+          @cooldown -= 1
+        end
+      end
+    end
   end
 
   def draw
@@ -50,6 +63,30 @@ class GameWindow < Gosu::Window
     elsif btn_code == Gosu::KB_RETURN
       @cell_matrix.update
     end
+
+    case btn_code
+    when Gosu::KB_0
+      @speed = 100
+    when Gosu::KB_9
+      @speed = 90
+    when Gosu::KB_8
+      @speed = 80
+    when Gosu::KB_7
+      @speed = 70
+    when Gosu::KB_6
+      @speed = 60
+    when Gosu::KB_5
+      @speed = 50
+    when Gosu::KB_4
+      @speed = 40
+    when Gosu::KB_3
+      @speed = 30
+    when Gosu::KB_2
+      @speed = 20
+    when Gosu::KB_1
+      @speed = 10
+    end
+
   end
 
   def needs_cursor?
@@ -105,10 +142,12 @@ class GameWindow < Gosu::Window
     @controls_font.draw_text('Next Iteration: Enter', 8, 72, 0)
     @controls_font.draw_text('Activate Cell: Left Click', 8, 96, 0)
     @controls_font.draw_text('Deactivate Cell: Right Click', 8, 120, 0)
+    @controls_font.draw_text('Adjust Speed: 1, 2, 3... 9, 0', 8, 144, 0)
   end
 
   def draw_info
-    @controls_font.draw_text("Iteration: #{@cell_matrix.iteration}", 8, 152, 0)
+    @controls_font.draw_text("Iteration: #{@cell_matrix.iteration}", 8, 192, 0)
+    @controls_font.draw_text("Speed: #{@speed}", 8, 216, 0)
   end
 
   def draw_cells
