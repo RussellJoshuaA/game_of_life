@@ -38,6 +38,7 @@ class CellMatrix
         @cells[row][column] = false
       end
     end
+    @iteration = 0
   end
 
   def update_cells
